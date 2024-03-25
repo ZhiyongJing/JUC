@@ -1,35 +1,31 @@
 package com.atguigu.completable;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 public class CompletableFutureDemo6 {
     private static Integer num = 10;
 
     /**
-     * 先对一个数加 10,然后取平方
-     * thenAccept 消费处理结果, 接收任务的处理结果，并消费处理，无返回结果。
+     * 异常处理
+     *
      * @param args
      */
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         System.out.println("主线程开始");
-        CompletableFuture.supplyAsync(() -> {
-            try {
-                System.out.println("加 10 任务开始");
-                num += 10;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> {
+            System.out.println("加 10 任务开始");
+            num += 10;
             return num;
-        }).thenApply(integer -> {
-            return num * num;
-        }).thenAccept(new Consumer<Integer>() {
-            @Override
-            public void accept(Integer integer) {
-                System.out.println("子线程全部处理完成,最后调用了 accept,结果为:" +
-                        integer);
+        }).handle((i, ex) -> {
+            System.out.println("进入 handle 方法");
+            if (ex != null) {
+                System.out.println("发生了异常,内容为:" + ex.getMessage());
+                return -1;
+            } else {
+                System.out.println("正常完成,内容为: " + i);
+                return i;
             }
         });
-        System.out.println("主线程结束");
+        System.out.println(future.get());
     }
 }
