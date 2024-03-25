@@ -37,20 +37,27 @@ public class Demo1 {
         //lam表达式
         FutureTask<Integer> futureTask2 = new FutureTask<>(()->{
             System.out.println(Thread.currentThread().getName()+" come in callable");
+            Thread.sleep(5000);
             return 1024;
         });
 
         //创建一个线程
         new Thread(futureTask2,"lucy").start();
         new Thread(futureTask1,"mary").start();
+        System.out.println("Jimmy");
 
-//        while(!futureTask2.isDone()) {
-//            System.out.println("wait.....");
-//        }
+        while(!futureTask2.isDone()) {
+            System.out.println("wait.....");
+        }
+
         //调用FutureTask的get方法
         System.out.println(futureTask2.get());
 
         System.out.println(futureTask1.get());
+
+
+
+        System.out.println("executed when callable is done");
 
         System.out.println(Thread.currentThread().getName()+" come over");
         //FutureTask原理  未来任务
